@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Английский сразу — карточки</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f3f4f6;color:#111;min-height:100vh}
+  .wrap{max-width:520px;margin:0 auto;padding:14px}
+  .tabs{display:flex;gap:8px;margin-bottom:10px}
+  .tabs button{flex:1;padding:10px;border:0;border-radius:10px;background:#e5e7eb;font-size:15px;cursor:pointer}
+  .tabs button.on{background:#2563eb;color:#fff}
+  .stats{display:flex;justify-content:space-between;font-size:14px;color:#555;margin-bottom:8px}
+  .bar{height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden;margin-bottom:12px}
+  .bar i{display:block;height:100%;background:#16a34a;width:0}
+  .stage{position:relative;height:auto;touch-action:pan-y}
+  .card{background:#fff;border-radius:16px;box-shadow:0 4px 18px rgba(0,0,0,.12);padding:14px;user-select:none;position:relative;transition:transform .25s,opacity .25s}
+  .card.drag{transition:none}
+  .card img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;display:block;pointer-events:none}
+  .card .ru-front{font-size:26px;font-weight:600;text-align:center;padding:50px 10px}
+  .badge{position:absolute;top:24px;font-size:22px;font-weight:700;padding:4px 12px;border:3px solid;border-radius:8px;opacity:0;background:#fffc}
+  .badge.r{left:24px;color:#16a34a;border-color:#16a34a;transform:rotate(-12deg)}
+  .badge.l{right:24px;color:#dc2626;border-color:#dc2626;transform:rotate(12deg)}
+  .answer{margin-top:12px;text-align:center;min-height:60px}
+  .answer .en{font-size:22px;font-weight:700}
+  .answer .ru{font-size:17px;color:#444;margin-top:4px}
+  .result{margin-top:10px;padding:8px;border-radius:8px;text-align:center;font-weight:600}
+  .ok{background:#dcfce7;color:#166534}.bad{background:#fee2e2;color:#991b1b}.near{background:#fef9c3;color:#854d0e}
+  form{display:flex;gap:8px;margin-top:12px}
+  input[type=text]{flex:1;padding:12px;font-size:17px;border:2px solid #d1d5db;border-radius:10px;min-width:0}
+  input[type=text]:focus{outline:none;border-color:#2563eb}
+  .btn{padding:12px 16px;border:0;border-radius:10px;font-size:16px;cursor:pointer;background:#2563eb;color:#fff}
+  .btn.sec{background:#e5e7eb;color:#111}
+  .row{display:flex;gap:8px;margin-top:10px}
+  .row .btn{flex:1}
+  .row .no{background:#dc2626}.row .yes{background:#16a34a}
+  .hint{font-size:13px;color:#777;text-align:center;margin-top:10px}
+  .modes button{background:#d1fae5}
+  .modes button.on{background:#16a34a;color:#fff}
+  #study table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+  #study td{padding:10px 12px;border-bottom:1px solid #eee;font-size:16px;vertical-align:top}
+  #study td:first-child{font-weight:600;width:50%}
+  #study td:last-child{color:#444}
+  #study .n{color:#999;font-weight:400;margin-right:6px}
+  #study h3{margin:4px 0 10px;font-size:17px}
+  .foot{margin-top:18px;text-align:center}
+  .foot button{background:none;border:0;color:#888;text-decoration:underline;cursor:pointer;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="tabs">
+    <button id="t1">1. Действия с предметами</button>
+    <button id="t2">2. Приключения чашки</button>
+  </div>
+  <div class="tabs modes">
+    <button id="m1">📖 Список — изучить</button>
+    <button id="m2">✍️ Тренировка</button>
+  </div>
+  <div id="study"></div>
+  <div id="practice">
+  <div class="stats"><span id="st-known"></span><span id="st-hard"></span></div>
+  <div class="bar"><i id="bar"></i></div>
+
+  <div class="stage"><div class="card" id="card"></div></div>
+
+  <form id="form" autocomplete="off">
+    <input type="text" id="inp" placeholder="Напиши по-английски или по-русски…" autocapitalize="off" autocorrect="off" spellcheck="false">
+    <button class="btn" type="submit" id="go">Проверить</button>
+  </form>
+  <div id="res"></div>
+  <div class="row">
+    <button class="btn no" id="again">← Повторить чаще</button>
+    <button class="btn yes" id="know">Запомнил →</button>
+  </div>
+  <div class="hint">Свайп карточки вправо — запомнил, влево — показывать чаще. Клавиши ← и → тоже работают.</div>
+  <div class="foot"><button id="reset">Сбросить прогресс этого раздела</button></div>
+  </div>
+</div>
+
+<script>
+const DECKS = {
+  1: { name: 'Действия с предметами', cards: [
+    ['Pick up the phone.', 'Подними / возьми телефон.'],
+    ['Put the cup down on the table.', 'Поставь чашку на стол.'],
+    ['Move the book aside.', 'Отодвинь книгу в сторону.'],
+    ['Move the box over here.', 'Передвинь / переставь коробку сюда.'],
+    ['Put the key in your pocket.', 'Положи ключ в карман.'],
+    ['Take the key out of your pocket.', 'Достань ключ из кармана.'],
+    ['Give me the pen.', 'Дай мне ручку.'],
+    ['Lift the box up.', 'Подними коробку вверх.'],
+    ['Lower the box slowly.', 'Медленно опусти коробку.'],
+    ['Tilt the bottle slightly.', 'Слегка наклони бутылку.'],
+    ['Keep the bottle upright.', 'Держи бутылку вертикально.'],
+    ['Bring the phone closer.', 'Поднеси телефон ближе.'],
+    ['Move the phone farther away.', 'Отодвинь / отнеси телефон подальше.'],
+    ['Give the bottle a good shake.', 'Хорошенько встряхни бутылку.'],
+    ["Be careful! Don't drop the glass.", 'Осторожно! Не урони стакан.'],
+    ['Carry the laptop carefully.', 'Неси ноутбук осторожно.'],
+    ['Set the plate down gently.', 'Аккуратно поставь тарелку.'],
+    ['Turn the phone around.', 'Разверни телефон.'],
+    ['Turn the cup upside down.', 'Переверни чашку вверх дном.'],
+    ['Leave the keys there.', 'Оставь ключи там.'],
+  ].map((c,i)=>({en:c[0],ru:c[1],img:'img/'+String(i+1).padStart(2,'0')+'.jpg'})) },
+  2: { name: 'Приключения чашки', cards: [
+    ['Pick up the cup.','Возьми чашку.'],
+    ['Put the cup down on the table.','Поставь чашку на стол.'],
+    ['Turn the cup around.','Поверни чашку другой стороной.'],
+    ['Move the cup aside.','Отодвинь чашку в сторону.'],
+    ['Move the cup over here.','Переставь чашку сюда.'],
+    ['Put the cup in the cabinet.','Поставь чашку в шкаф.'],
+    ['Take it out of the cabinet.','Достань её из шкафа.'],
+    ['Give the cup to me.','Дай чашку мне.'],
+    ['Hold the cup by the handle.','Держи чашку за ручку.'],
+    ['Lift the cup up.','Подними чашку.'],
+    ['Lower the cup slowly.','Медленно опусти чашку.'],
+    ['Tilt the cup slightly.','Слегка наклони чашку.'],
+    ["Don't spill the drink.",'Не пролей напиток.'],
+    ['Keep the cup steady.','Держи чашку неподвижно.'],
+    ['Bring the cup closer.','Поднеси чашку ближе.'],
+    ['Move the cup farther away.','Отодвинь чашку подальше.'],
+    ['Look at the cup.','Посмотри на чашку.'],
+    ["Check if it's clean.",'Проверь, чистая ли она.'],
+    ['Shake the cup gently.','Осторожно встряхни чашку.'],
+    ["Be careful! Don't drop the cup.",'Осторожно! Не урони чашку.'],
+    ['Carry the cup carefully.','Неси чашку осторожно.'],
+    ['Set the cup down gently.','Аккуратно поставь чашку.'],
+    ['Pour some water into the cup.','Налей немного воды в чашку.'],
+    ['Add some sugar.','Добавь немного сахара.'],
+    ['Stir the drink.','Размешай напиток.'],
+    ['Bring the cup to your lips.','Поднеси чашку к губам.'],
+    ['Take a sip.','Сделай глоток.'],
+    ["Be careful, it's hot.",'Осторожно, напиток горячий.'],
+    ['Drink from the cup.','Пей из чашки.'],
+    ['Finish your drink.','Допей свой напиток.'],
+    ['Wash the cup.','Помой чашку.'],
+    ['Turn the cup upside down.','Переверни чашку вверх дном.'],
+    ['Leave the cup there.','Оставь чашку там.'],
+  ].map((c,i)=>({en:c[0],ru:c[1],img:'img/cup'+String(i+1).padStart(2,'0')+'.svg'})) },
+};
+const WEIGHTS = [10,5,2.5,1.2,0.5,0.2]; // чем выше "коробка", тем реже карточка
+const MAXBOX = WEIGHTS.length - 1;
+
+const $ = id => document.getElementById(id);
+let deckId = +(localStorage.getItem('deck') || 1);
+let progress = {};   // index -> box
+let cur = -1, last = -1, revealed = false;
+
+function load(){ try{ progress = JSON.parse(localStorage.getItem('prog'+deckId)) || {}; }catch(e){ progress = {}; } }
+function save(){ localStorage.setItem('prog'+deckId, JSON.stringify(progress)); }
+const deck = () => DECKS[deckId].cards;
+const box = i => progress[i] ?? 0;
+
+function norm(s){
+  return s.toLowerCase().replace(/ё/g,'е').replace(/[’‘`´]/g,"'")
+    .replace(/[^a-zа-я0-9' ]+/g,' ').replace(/\s+/g,' ').trim();
+}
+function lev(a,b){
+  const d = Array.from({length:a.length+1},(_,i)=>[i,...Array(b.length).fill(0)]);
+  for(let j=0;j<=b.length;j++) d[0][j]=j;
+  for(let i=1;i<=a.length;i++) for(let j=1;j<=b.length;j++)
+    d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+  return d[a.length][b.length];
+}
+// варианты ответа: "Подними / возьми телефон." -> "подними телефон", "возьми телефон"
+function variants(text){
+  const t = text.replace(/\.$/,'');
+  const parts = t.split('/').map(s=>s.trim());
+  if(parts.length===1) return [norm(t)];
+  const words = parts.map(p=>p.split(' '));
+  const tail = words[words.length-1].slice(1).join(' ');
+  const out = new Set(parts.map(p=>norm(p)));
+  parts.forEach((p,i)=>{ if(i<parts.length-1 && p.split(' ').length===1) out.add(norm(p+' '+tail)); });
+  return [...out];
+}
+function check(input, c){
+  const cyr = /[а-яё]/i.test(input);
+  const vs = cyr ? variants(c.ru) : [norm(c.en)];
+  const n = norm(input);
+  if(!n) return 'empty';
+  if(vs.includes(n)) return 'ok';
+  // допускаем отсутствие артиклей/лишний пробел — и 1 опечатку в длинных фразах
+  const best = Math.min(...vs.map(v=>lev(n,v)));
+  if(best <= (n.length > 12 ? 2 : 1)) return 'near';
+  return 'bad';
+}
+
+function pick(){
+  const n = deck().length;
+  let total = 0; const ws = [];
+  for(let i=0;i<n;i++){ const w = i===last ? 0 : WEIGHTS[box(i)]; ws.push(w); total += w; }
+  let r = Math.random()*total;
+  for(let i=0;i<n;i++){ r -= ws[i]; if(r<=0) return i; }
+  return (last+1)%n;
+}
+
+function render(){
+  const c = deck()[cur];
+  const card = $('card');
+  card.className = 'card'; card.style.transform=''; card.style.opacity=1;
+  card.innerHTML =
+    '<div class="badge r" id="bR">ЗАПОМНИЛ</div><div class="badge l" id="bL">ЕЩЁ РАЗ</div>' +
+    (c.img ? `<img src="${c.img}" alt="">` : `<div class="ru-front">${c.ru}</div>`) +
+    '<div class="answer" id="ans"></div>';
+  revealed = false;
+  $('res').innerHTML = '';
+  $('inp').value = ''; $('inp').disabled = false;
+  $('go').textContent = 'Проверить';
+  $('inp').focus({preventScroll:true});
+  stats();
+}
+function reveal(){
+  const c = deck()[cur];
+  revealed = true;
+  $('ans').innerHTML = `<div class="en">${c.en}</div>` + (c.img ? `<div class="ru">${c.ru}</div>` : '');
+}
+function stats(){
+  const n = deck().length;
+  let known = 0, hard = 0;
+  for(let i=0;i<n;i++){ if(box(i)>=3) known++; else if(i in progress) hard++; }
+  $('st-known').textContent = `Выучено: ${known} из ${n}`;
+  $('st-hard').textContent = `Трудных: ${hard}`;
+  $('bar').style.width = (known/n*100)+'%';
+}
+
+$('form').addEventListener('submit', e=>{
+  e.preventDefault();
+  if(revealed){ $('inp').value=''; return; }   // повторный Enter ничего не делает
+  const v = $('inp').value;
+  if(!v.trim()){ reveal(); return; }
+  const r = check(v, deck()[cur]);
+  reveal();
+  $('res').innerHTML = r==='ok' ? '<div class="result ok">✓ Верно! Свайп вправо — запомнил</div>'
+    : r==='near' ? '<div class="result near">≈ Почти верно (небольшая опечатка)</div>'
+    : '<div class="result bad">✗ Не совпало — сравни с ответом выше</div>';
+  $('go').textContent = 'Показано';
+});
+
+function answer(knew){
+  const card = $('card');
+  progress[cur] = knew ? Math.min(MAXBOX, box(cur)+1) : 0;
+  save();
+  card.style.transform = `translateX(${knew?500:-500}px) rotate(${knew?20:-20}deg)`;
+  card.style.opacity = 0;
+  last = cur;
+  setTimeout(()=>{ cur = pick(); render(); }, 220);
+}
+$('know').onclick = ()=>answer(true);
+$('again').onclick = ()=>answer(false);
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight' && (e.ctrlKey || document.activeElement!==$('inp') || !$('inp').value)) { e.preventDefault(); answer(true); }
+  if(e.key==='ArrowLeft'  && (e.ctrlKey || document.activeElement!==$('inp') || !$('inp').value)) { e.preventDefault(); answer(false); }
+});
+
+// свайп
+(function(){
+  const card = $('card'); let x0=null, dx=0;
+  card.addEventListener('pointerdown', e=>{ x0=e.clientX; dx=0; card.classList.add('drag'); card.setPointerCapture(e.pointerId); });
+  card.addEventListener('pointermove', e=>{
+    if(x0===null) return;
+    dx = e.clientX-x0;
+    card.style.transform = `translateX(${dx}px) rotate(${dx/18}deg)`;
+    const bR=$('bR'), bL=$('bL');
+    if(bR) bR.style.opacity = Math.max(0, Math.min(1, dx/100));
+    if(bL) bL.style.opacity = Math.max(0, Math.min(1, -dx/100));
+  });
+  const end = ()=>{
+    if(x0===null) return;
+    card.classList.remove('drag');
+    const d = dx; x0=null;
+    if(d>90) answer(true);
+    else if(d<-90) answer(false);
+    else { card.style.transform=''; const bR=$('bR'),bL=$('bL'); if(bR)bR.style.opacity=0; if(bL)bL.style.opacity=0; }
+  };
+  card.addEventListener('pointerup', end);
+  card.addEventListener('pointercancel', end);
+})();
+
+let mode = localStorage.getItem('mode') || 'study';
+function renderStudy(){
+  $('study').innerHTML = `<h3>${DECKS[deckId].name} — ${deck().length} фраз</h3><table>` +
+    deck().map((c,i)=>`<tr><td><span class="n">${i+1}.</span>${c.en}</td><td>${c.ru}</td></tr>`).join('') + '</table>' +
+    '<div class="hint">Прочитай список, затем переходи в «Тренировку» — там будут картинки.</div>';
+}
+function setMode(m){
+  mode = m; localStorage.setItem('mode', m);
+  $('m1').classList.toggle('on', m==='study'); $('m2').classList.toggle('on', m==='practice');
+  $('study').style.display = m==='study' ? '' : 'none';
+  $('practice').style.display = m==='practice' ? '' : 'none';
+  if(m==='practice') $('inp').focus({preventScroll:true});
+}
+$('m1').onclick = ()=>setMode('study');
+$('m2').onclick = ()=>setMode('practice');
+
+function setDeck(id){
+  deckId = id; localStorage.setItem('deck', id);
+  $('t1').classList.toggle('on', id===1); $('t2').classList.toggle('on', id===2);
+  load(); last = -1; cur = pick(); render(); renderStudy(); setMode(mode);
+}
+$('t1').onclick = ()=>setDeck(1);
+$('t2').onclick = ()=>setDeck(2);
+$('reset').onclick = ()=>{ if(confirm('Сбросить прогресс этого раздела?')){ progress={}; save(); last=-1; cur=pick(); render(); } };
+
+setDeck(deckId);
+</script>
+</body>
+</html>
