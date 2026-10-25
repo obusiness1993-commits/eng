@@ -49,6 +49,13 @@
   #study td:last-child{color:#444}
   #study .n{color:#999;font-weight:400;margin-right:6px}
   #study h3{margin:4px 0 10px;font-size:17px}
+  .tabs:not(.modes) button{font-size:14px;padding:8px 4px}
+  .card.dlg{padding:0;overflow:hidden;cursor:pointer;background:#1f2937}
+  .card.dlg img{object-fit:cover;border-radius:0}
+  .plate{position:absolute;left:0;right:0;bottom:0;background:rgba(17,24,39,.88);color:#fff;padding:12px 14px;font-size:17px;line-height:1.4}
+  .plate .tap{font-size:14px;color:#cbd5e1;text-align:center}
+  .plate .en-l{font-weight:700}
+  .plate .ru-l.small{font-size:14px;color:#cbd5e1;margin-top:6px}
   .foot{margin-top:6px;text-align:center}
   .foot button{background:none;border:0;color:#888;text-decoration:underline;cursor:pointer;font-size:13px}
 </style>
@@ -58,6 +65,7 @@
   <div class="tabs">
     <button id="t1">1. Действия с предметами</button>
     <button id="t2">2. Приключения чашки</button>
+    <button id="t3">3. На кухне</button>
   </div>
   <div class="tabs modes">
     <button id="m1">📖 Список — изучить</button>
@@ -143,6 +151,78 @@ const DECKS = {
     ['Turn the cup upside down.','Переверни чашку вверх дном.'],
     ['Leave the cup there.','Оставь чашку там.'],
   ].map((c,i)=>({en:c[0],ru:c[1],img:'img/cup'+String(i+1).padStart(2,'0')+'.svg'})) },
+  // диалоги: lines — реплики по-английски, ru — перевод, alt — другие верные варианты для реплик (по номеру)
+  3: { name: 'На кухне', dialog: true, cards: [
+    { lines:["Hi! How are you?","Hi! I'm good. How about you?","I'm good too."],
+      ru:["Привет! Как дела?","Привет! У меня всё хорошо. А у тебя?","У меня тоже всё хорошо."],
+      alt:[["Hello! How are you?","Hi! How are you doing?"],["Hi! I'm fine. And you?","Hi! I'm good. And you?","Hi! I'm fine. How about you?","Hi! I'm good. What about you?"],["I'm fine too.","Me too.","I'm also good."]] },
+    { lines:["I've got some coffee. Would you like some?","Yes, please. Just a little."],
+      ru:["У меня есть кофе. Хочешь немного?","Да, пожалуйста. Только немного."],
+      alt:[["I have some coffee. Would you like some?","I have got some coffee. Do you want some?","I have some coffee. Do you want some?"],["Yes, please. Only a little.","Yes, please. Just a bit."]] },
+    { lines:["Can I use this cup?","Yes, of course. It looks like mine."],
+      ru:["Можно мне воспользоваться этой чашкой?","Да, конечно. Похоже, это моя."],
+      alt:[["May I use this cup?","Could I use this cup?"],["Sure. It looks like mine.","Yes, sure. It looks like it's mine.","Of course. I think it's mine."]] },
+    { lines:["I'd like some milk in my coffee.","Sure. Could you open the fridge and pass me the milk?"],
+      ru:["Я бы хотел немного молока в кофе.","Конечно. Можешь открыть холодильник и передать мне молоко?"],
+      alt:[["I would like a little milk in my coffee.","I want some milk in my coffee."],["Of course. Can you open the fridge and pass me the milk?","Sure. Could you open the fridge and give me the milk?","Sure. Can you open the fridge and hand me the milk?"]] },
+    { lines:["Oh no! We're running out of milk.","I'll get some on my way home."],
+      ru:["О нет! У нас заканчивается молоко.","Я куплю немного по дороге домой."],
+      alt:[["Oh no! We are running low on milk.","Oh no! We're almost out of milk."],["I'll buy some on my way home.","I will buy some on the way home.","I'll get some on the way home."]] },
+    { lines:["How about a cup of tea? Would you like some?","Sounds good. Pour a little into my cup, please."],
+      ru:["Как насчёт чашки чая? Хочешь немного?","Давай. Налей немного в мою чашку, пожалуйста."],
+      alt:[["What about a cup of tea? Do you want some?","How about a cup of tea? Do you want some?"],["Sounds good. Please pour a little into my cup.","Okay. Pour a little into my cup, please.","Sounds great. Pour some into my cup, please."]] },
+    { lines:["Be careful! Don't spill the tea.","I'll do my best. The cup's quite full."],
+      ru:["Осторожно! Не пролей чай.","Я постараюсь. Чашка довольно полная."],
+      alt:[["Careful! Don't spill the tea.","Be careful! Do not spill the tea."],["I'll try. The cup is quite full.","I'll do my best. The cup is pretty full.","I'll try my best. The cup is very full."]] },
+    { lines:["Just a little, please.","Sure. Let me know when to stop."],
+      ru:["Совсем немного, пожалуйста.","Конечно. Скажи, когда хватит."],
+      alt:[["Only a little, please.","Just a bit, please."],["Of course. Tell me when to stop.","Sure. Say when.","Okay. Tell me when it's enough."]] },
+    { lines:["I need a chair. Where can I get one?","How about this one? Is it okay?"],
+      ru:["Мне нужен стул. Где его можно взять?","Как насчёт этого? Подойдёт?"],
+      alt:[["I need a chair. Where can I find one?","I need a chair. Where can I take one?"],["What about this one? Is it okay?","How about this one? Is it fine?","How about this one? Will it do?"]] },
+    { lines:["This one looks good.","Can I use it?"],
+      ru:["Этот выглядит неплохо.","Можно им воспользоваться?"],
+      alt:[["This one looks fine.","This one looks nice."],["May I use it?","Could I use it?"]] },
+    { lines:["Let me move this chair for you.","Thanks. That's much better."],
+      ru:["Давай я передвину для тебя этот стул.","Спасибо. Так намного лучше."],
+      alt:[["I'll move this chair for you.","Let me move the chair for you."],["Thank you. That's much better.","Thanks. It's much better.","Thank you. That is much better now."]] },
+    { lines:["Can you pass me the sugar?","Sure. Here you go."],
+      ru:["Можешь передать мне сахар?","Конечно. Держи."],
+      alt:[["Could you pass me the sugar?","Can you give me the sugar?","Pass me the sugar, please."],["Of course. Here you are.","Sure. Here it is.","Sure. Here you are."]] },
+    { lines:["How do you like it? How is it?","It's much better than I expected."],
+      ru:["Тебе нравится? Ну как?","Намного лучше, чем я ожидал."],
+      alt:[["Do you like it? How is it?","How do you like it?"],["It's a lot better than I expected.","It is much better than I thought."]] },
+    { lines:["Would you like a little more?","No, thanks. I've had enough."],
+      ru:["Хочешь ещё немного?","Нет, спасибо. Мне достаточно."],
+      alt:[["Do you want a little more?","Would you like some more?"],["No, thank you. I've had enough.","No, thanks. That's enough for me.","No, thanks. I'm full."]] },
+    { lines:["What do you feel like eating?","I don't know. What's available?"],
+      ru:["Что тебе хочется поесть?","Не знаю. А что есть?"],
+      alt:[["What would you like to eat?","What do you want to eat?"],["I don't know. What do we have?","I'm not sure. What's available?","I don't know. What have we got?"]] },
+    { lines:["We've got some bread and eggs.","I'd like a couple of eggs, please."],
+      ru:["У нас есть немного хлеба и яйца.","Мне пару яиц, пожалуйста."],
+      alt:[["We have some bread and eggs.","We've got some bread and some eggs."],["I'd like two eggs, please.","A couple of eggs, please.","I would like a couple of eggs, please."]] },
+    { lines:["You'd better use both hands.","Good idea. It's heavier than I thought."],
+      ru:["Лучше возьми двумя руками.","Хорошая идея. Это тяжелее, чем я думал."],
+      alt:[["You'd better take it with both hands.","Better use both hands."],["Good idea. It's heavier than I expected.","Good idea. It is heavier than I thought."]] },
+    { lines:["Could you put these plates on the table?","Sure. How many do we need?"],
+      ru:["Можешь поставить эти тарелки на стол?","Конечно. Сколько нам нужно?"],
+      alt:[["Can you put these plates on the table?","Could you set these plates on the table?"],["Of course. How many do we need?","Sure. How many plates do we need?"]] },
+    { lines:["I can't find the fork.","Have you checked the fridge?","Got it! It was in there."],
+      ru:["Не могу найти вилку.","Ты смотрел в холодильнике?","Нашёл! Она была там."],
+      alt:[["I cannot find the fork.","I can't find a fork."],["Did you check the fridge?","Have you looked in the fridge?","Did you look in the fridge?"],["Found it! It was in there.","Got it! It was there."]] },
+    { lines:["There's something on the floor. What's that?","Oh, it's a frying pan. I'll pick it up."],
+      ru:["На полу что-то лежит. Что это?","А, это сковорода. Я её подниму."],
+      alt:[["There is something on the floor. What is it?","Something is on the floor. What's that?"],["Oh, it's a frying pan. Let me pick it up.","It's a frying pan. I'll pick it up."]] },
+    { lines:["Actually, I'm not that hungry.","Same here. Let's leave it for later."],
+      ru:["Вообще-то я не так уж голоден.","Я тоже. Давай оставим это на потом."],
+      alt:[["Actually, I'm not very hungry.","To be honest, I'm not that hungry."],["Me too. Let's leave it for later.","Same here. Let's save it for later."]] },
+    { lines:["Let's clean up the kitchen together.","Good idea. I'll wash the plates."],
+      ru:["Давай вместе уберём на кухне.","Хорошая идея. Я помою тарелки."],
+      alt:[["Let's clean the kitchen together.","Let's tidy up the kitchen together."],["Good idea. I'll do the dishes.","Good idea. I will wash the plates."]] },
+    { lines:["Thank you. Thanks for the coffee.","You're welcome. Come by anytime."],
+      ru:["Спасибо. Спасибо за кофе.","Пожалуйста. Заходи в любое время."],
+      alt:[["Thanks for the coffee.","Thank you for the coffee."],["You're welcome. Come over anytime.","You're welcome. Drop by any time.","No problem. Come by anytime."]] },
+  ].map((c,i)=>({...c, en:c.lines.join(' '), ruText:c.ru.join(' '), img:'img/kitchen/k'+String(i+1).padStart(2,'0')+'.jpg'})) },
 };
 const WEIGHTS = [10,5,2.5,1.2,0.5,0.2]; // чем выше "коробка", тем реже карточка
 const MAXBOX = WEIGHTS.length - 1;
@@ -191,6 +271,51 @@ function check(input, c){
   return 'bad';
 }
 
+// ---- проверка диалогов «по смыслу» ----
+const CONTR = [[/\bwon't\b/g,'will not'],[/\bcan't\b/g,'can not'],[/\bcannot\b/g,'can not'],[/n't\b/g,' not'],
+  [/'m\b/g,' am'],[/'re\b/g,' are'],[/'ve\b/g,' have'],[/'ll\b/g,' will'],[/'d\b/g,' would'],
+  [/\blet's\b/g,'let us'],[/\b(it|that|what|there|he|she|cup|who|where|here)'s\b/g,'$1 is']];
+const SYN = [ // фраза -> каноническая форма (слова-синонимы считаем одинаковыми)
+  ['thank you','thanks'],['of course','sure'],['certainly','sure'],['okay','ok'],['all right','ok'],['fine','good'],
+  ['yeah','yes'],['a bit','a little'],['only','just'],['hand me','pass me'],['give me','pass me'],
+  ['could','can'],['may','can'],['want','would like'],['what about','how about'],['a lot','much'],
+  ['pretty','quite'],['very','quite'],['buy','get'],['find','get'],['the way','my way'],['looked','checked'],['look','check'],
+  ['thought','expected'],['here you are','here you go'],['here it is','here you go'],['me too','same here'],['found it','got it'],
+];
+const FILLER = new Set(['please','oh','well','so','just','really','now','then','hey']);
+function canon(s){
+  s = s.toLowerCase().replace(/[’‘`´]/g,"'");
+  CONTR.forEach(([r,t])=>{ s = s.replace(r,t); });
+  s = ' '+s.replace(/[^a-z0-9' ]+/g,' ').replace(/'/g,'').replace(/\s+/g,' ').trim()+' ';
+  SYN.forEach(([a,b])=>{ s = s.split(' '+a+' ').join(' '+b+' '); s = s.split(' '+a+' ').join(' '+b+' '); });
+  return s.trim().split(' ').filter(w=>w && !FILLER.has(w));
+}
+const wEq = (a,b)=> a===b || (a.length>3 && b.length>3 && lev(a,b)<=1);
+// LCS по словам; возвращает длину и какие слова эталона совпали
+function lcs(a,b){
+  const d = Array.from({length:a.length+1},()=>Array(b.length+1).fill(0));
+  for(let i=1;i<=a.length;i++) for(let j=1;j<=b.length;j++)
+    d[i][j] = wEq(a[i-1],b[j-1]) ? d[i-1][j-1]+1 : Math.max(d[i-1][j],d[i][j-1]);
+  return d[a.length][b.length];
+}
+function combos(c){
+  let out = [[]];
+  c.lines.forEach((l,i)=>{
+    const opts = [l, ...((c.alt||[])[i]||[])];
+    const nx = []; out.forEach(p=>opts.forEach(o=>nx.push([...p,o]))); out = nx.slice(0,400);
+  });
+  return out.map(p=>p.join(' '));
+}
+function checkDialog(input, c){
+  if(!input.trim()) return {r:'empty'};
+  if(/[а-яё]/i.test(input)) return {r:'cyr'};
+  const a = canon(input);
+  let best = 0;
+  combos(c).forEach(v=>{ const b = canon(v); const s = lcs(a,b) / Math.max(a.length,b.length); if(s>best) best=s; });
+  const r = best>=0.93 ? 'ok' : best>=0.75 ? 'sense' : best>=0.5 ? 'near' : 'bad';
+  return {r, score: Math.round(best*100)};
+}
+
 function pick(){
   const n = deck().length;
   let total = 0; const ws = [];
@@ -204,6 +329,20 @@ function render(){
   const c = deck()[cur];
   const card = $('card');
   card.className = 'card'; card.style.transform=''; card.style.opacity=1;
+  $('inp').placeholder = DECKS[deckId].dialog ? 'Напиши диалог по-английски…' : 'Напиши по-английски или по-русски…';
+  if(DECKS[deckId].dialog){
+    card.className = 'card dlg';
+    card.innerHTML =
+      '<div class="badge r" id="bR">ЗАПОМНИЛ</div><div class="badge l" id="bL">ЕЩЁ РАЗ</div>' +
+      `<img src="${c.img}" alt="">` +
+      '<div class="plate" id="plate"><div class="tap">👆 Нажми на карточку — подсказка на русском</div></div>';
+    revealed = false; hintOn = false;
+    $('res').innerHTML = '';
+    $('inp').value = ''; $('inp').disabled = false;
+    $('go').textContent = 'Проверить';
+    $('inp').focus({preventScroll:true});
+    stats(); return;
+  }
   card.innerHTML =
     '<div class="badge r" id="bR">ЗАПОМНИЛ</div><div class="badge l" id="bL">ЕЩЁ РАЗ</div>' +
     (c.img ? `<img src="${c.img}" alt="">` : `<div class="ru-front">${c.ru}</div>`) +
@@ -215,9 +354,23 @@ function render(){
   $('inp').focus({preventScroll:true});
   stats();
 }
+let hintOn = false;
+function toggleHint(){
+  if(!DECKS[deckId].dialog || revealed) return;
+  const c = deck()[cur];
+  hintOn = !hintOn;
+  $('plate').innerHTML = hintOn
+    ? '<div class="ru-l">' + c.ru.map(l=>'– '+l).join('<br>') + '</div>'
+    : '<div class="tap">👆 Нажми на карточку — подсказка на русском</div>';
+}
 function reveal(){
   const c = deck()[cur];
   revealed = true;
+  if(DECKS[deckId].dialog){
+    $('plate').innerHTML = '<div class="en-l">' + c.lines.map(l=>'– '+l).join('<br>') + '</div>' +
+      '<div class="ru-l small">' + c.ru.map(l=>'– '+l).join('<br>') + '</div>';
+    return;
+  }
   $('ans').innerHTML = `<div class="en">${c.en}</div>` + (c.img ? `<div class="ru">${c.ru}</div>` : '');
 }
 function stats(){
@@ -234,6 +387,18 @@ $('form').addEventListener('submit', e=>{
   if(revealed){ $('inp').value=''; return; }   // повторный Enter ничего не делает
   const v = $('inp').value;
   if(!v.trim()){ reveal(); return; }
+  if(DECKS[deckId].dialog){
+    const {r, score} = checkDialog(v, deck()[cur]);
+    if(r==='cyr'){ $('res').innerHTML = '<div class="result near">Здесь пиши по-английски 🙂</div>'; return; }
+    reveal();
+    $('res').innerHTML =
+        r==='ok'    ? '<div class="result ok">✓ Верно! Свайп вправо — запомнил</div>'
+      : r==='sense' ? `<div class="result ok">✓ Засчитано — по смыслу верно (${score}%). Сравни с вариантом на карточке</div>`
+      : r==='near'  ? `<div class="result near">≈ Частично (${score}%) — сравни с ответом на карточке</div>`
+      :               '<div class="result bad">✗ Не совпало — сравни с ответом на карточке</div>';
+    $('go').textContent = 'Показано';
+    return;
+  }
   const r = check(v, deck()[cur]);
   reveal();
   $('res').innerHTML = r==='ok' ? '<div class="result ok">✓ Верно! Свайп вправо — запомнил</div>'
@@ -276,7 +441,7 @@ document.addEventListener('keydown', e=>{
     const d = dx; x0=null;
     if(d>90) answer(true);
     else if(d<-90) answer(false);
-    else { card.style.transform=''; const bR=$('bR'),bL=$('bL'); if(bR)bR.style.opacity=0; if(bL)bL.style.opacity=0; }
+    else { if(Math.abs(d)<6) toggleHint(); card.style.transform=''; const bR=$('bR'),bL=$('bL'); if(bR)bR.style.opacity=0; if(bL)bL.style.opacity=0; }
   };
   card.addEventListener('pointerup', end);
   card.addEventListener('pointercancel', end);
@@ -285,7 +450,9 @@ document.addEventListener('keydown', e=>{
 let mode = localStorage.getItem('mode') || 'study';
 function renderStudy(){
   $('study').innerHTML = `<h3>${DECKS[deckId].name} — ${deck().length} фраз</h3><table>` +
-    deck().map((c,i)=>`<tr><td><span class="n">${i+1}.</span>${c.en}</td><td>${c.ru}</td></tr>`).join('') + '</table>' +
+    deck().map((c,i)=> c.lines
+      ? `<tr><td><span class="n">${i+1}.</span>${c.lines.map(l=>'– '+l).join('<br>')}</td><td>${c.ru.map(l=>'– '+l).join('<br>')}</td></tr>`
+      : `<tr><td><span class="n">${i+1}.</span>${c.en}</td><td>${c.ru}</td></tr>`).join('') + '</table>' +
     '<div class="hint">Прочитай список, затем переходи в «Тренировку» — там будут картинки.</div>';
 }
 function setMode(m){
@@ -300,11 +467,12 @@ $('m2').onclick = ()=>setMode('practice');
 
 function setDeck(id){
   deckId = id; localStorage.setItem('deck', id);
-  $('t1').classList.toggle('on', id===1); $('t2').classList.toggle('on', id===2);
+  [1,2,3].forEach(n=>$('t'+n).classList.toggle('on', id===n));
   load(); last = -1; cur = pick(); render(); renderStudy(); setMode(mode);
 }
 $('t1').onclick = ()=>setDeck(1);
 $('t2').onclick = ()=>setDeck(2);
+$('t3').onclick = ()=>setDeck(3);
 $('reset').onclick = ()=>{ if(confirm('Сбросить прогресс этого раздела?')){ progress={}; save(); last=-1; cur=pick(); render(); } };
 
 // подгон под экран с клавиатурой (мобильные)
